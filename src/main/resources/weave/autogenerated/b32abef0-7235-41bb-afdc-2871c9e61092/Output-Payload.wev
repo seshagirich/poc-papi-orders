@@ -1,0 +1,37 @@
+%dw 2.0
+
+type auto_b32abef0_7235_41bb_afdc_2871c9e61092_Output_Payload = {|
+  "0": org_mule_runtime_api_message_Message {"typeId": "org.mule.runtime.api.message.Message"}, 
+  "1": org_mule_runtime_api_message_Message_5 {"typeId": "org.mule.runtime.api.message.Message"}, 
+  "2": org_mule_runtime_api_message_Message_6 {"typeId": "org.mule.runtime.api.message.Message"}
+|}
+type org_mule_runtime_api_message_Message_6 = {|
+  payload: Any, 
+  attributes: org_mule_extension_http_api_HttpResponseAttributes {"typeId": "org.mule.extension.http.api.HttpResponseAttributes",
+  "typeAlias": "HttpResponseAttributes"}
+|} {"typeId": "org.mule.runtime.api.message.Message"}
+type org_mule_extension_http_api_HttpResponseAttributes = {|
+  statusCode: Number, 
+  reasonPhrase: String, 
+  headers: { _?: String }
+|} {"typeId": "org.mule.extension.http.api.HttpResponseAttributes",
+"typeAlias": "HttpResponseAttributes"}
+
+
+
+
+type org_mule_runtime_api_message_Message_5 = {|
+  payload: Any, 
+  attributes: org_mule_extension_http_api_HttpResponseAttributes {"typeId": "org.mule.extension.http.api.HttpResponseAttributes",
+  "typeAlias": "HttpResponseAttributes"}
+|} {"typeId": "org.mule.runtime.api.message.Message"}
+
+
+type org_mule_runtime_api_message_Message = {|
+  payload: Any, 
+  attributes: org_mule_extension_http_api_HttpResponseAttributes {"typeId": "org.mule.extension.http.api.HttpResponseAttributes",
+  "typeAlias": "HttpResponseAttributes"}
+|} {"typeId": "org.mule.runtime.api.message.Message"}
+
+
+

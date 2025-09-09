@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_b32abef0_7235_41bb_afdc_2871c9e61092_Output_Variables_inventoryPayload = Any
+

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="papi-order-create-subscriber-test-suite.xml" />
+	<munit:test name="papi-order-create-subscriber-test-suite-papi-order-create-subscriberFlowTest" doc:id="1bef1460-4716-48cf-baf4-01b669806ca7" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="vm:listener" doc:id="69579e52-2578-46e2-addb-7909019f9246" processor="vm:listener">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ecomm.orders" attributeName="queueName" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[MunitTools::getResourceAsString('order-create-response.json')]" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<!-- [STUDIO:"order-request"]<munit-tools:mock-when doc:name="order-request" doc:id="b39d47ce-d426-4768-b781-453cba48c520" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="order_Request" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[MunitTools::getResourceAsString('sapi-order-request.json')&#93;" mediaType="application/json" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when> [STUDIO] -->
+			<!-- [STUDIO:"price request"]<munit-tools:mock-when doc:name="price request" doc:id="54329c3b-2759-46b6-b47e-270d28f9d6ff" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Price_Request" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when> [STUDIO] -->
+			<!-- [STUDIO:"stock request"]<munit-tools:mock-when doc:name="stock request" doc:id="495a15bb-3657-4c42-ad3a-66249c3cd61b" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Stock_Request" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when> [STUDIO] -->
+			<!-- [STUDIO:"customer request"]<munit-tools:mock-when doc:name="customer request" doc:id="26fbcf18-ad06-472d-9d2e-3b8137d38d86" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="Customer_Request" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when> [STUDIO] -->
+			<!-- [STUDIO:"tax request"]<munit-tools:mock-when doc:name="tax request" doc:id="1636d50d-c637-4266-919b-30b40ba21f47" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="tax request" attributeName="doc:name" />
+				</munit-tools:with-attributes>
+			</munit-tools:mock-when> [STUDIO] -->
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="22f5104c-0956-42c5-a025-978e9b939fa8" >
+				<munit:payload value="#[MunitTools::getResourceAsString('order-create-request.json')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to papi-order-create-subscriberFlow" doc:id="3ae0b58c-267c-42ef-8486-fa5fa4355380" name="papi-order-create-subscriberFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="a0567d8c-dc38-4890-a569-0a35a893b7a4" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>

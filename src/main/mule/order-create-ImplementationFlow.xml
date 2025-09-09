@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+	<vm:config name="VM_Config" doc:name="VM Config" doc:id="b7c1eb81-f153-4a89-9ad4-58eb64370429" >
+		<vm:queues >
+			<vm:queue queueName="ecomm.orders" />
+		</vm:queues>
+	</vm:config>
+	<flow name="post:\v1\order\create:application\json:poc-papi-orders-config">
+		<logger level="INFO" doc:name="******start flow ********  " doc:id="e1331758-a365-43cd-963c-b5a8cb6348c7" message="******start flow ********   #[payload]"/>
+		<foreach doc:name="For Each" doc:id="03b23b36-1143-46f2-aa91-b8f66612d9ff" collection="#[payload]">
+			<ee:transform doc:name="set queue payload" doc:id="cb0db5b0-3951-4dcc-b867-44b8048cc9f5">
+			<ee:message>
+			</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="queuePayload" ><![CDATA[%dw 2.0
+output application/json
+---
+[
+    {
+        "customerId": payload.customerId,
+        "productName": payload.productName
+    }
+   
+  ]]]></ee:set-variable>
+				</ee:variables>
+		</ee:transform>
+			<vm:publish doc:name="Publish" doc:id="16c3178d-3ed9-4be6-8ce7-d65d7f621760" config-ref="VM_Config" queueName="ecomm.orders">
+				<vm:content ><![CDATA[#[vars.queuePayload]]]></vm:content>
+			</vm:publish>
+		</foreach>
+		<ee:transform doc:name="response" doc:id="18936fc9-718f-4ceb-8524-41822df081ee" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	'status': "order placed successfully"
+
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="******end flow ********   #[payload]" doc:id="01bf6814-9116-4c31-96e7-1f298a29ea41" message="******end flow ********   #[payload]"/>
+
+    </flow>
+	</mule>

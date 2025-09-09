@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="papi-order-create-subscriberFlow" doc:id="049b58a1-9dfd-468b-a17e-6f2e2f6a365c" >
+		<vm:listener queueName="ecomm.orders" doc:name="Listener-vm" doc:id="9bd3fd73-e1fa-4558-a86b-12f2a8f0f734" config-ref="VM_Config"/>
+		<logger level="INFO" doc:name="**start flow** seshu" doc:id="f7ffa6cd-f04e-4860-a76a-5ec3fcaeaf41" message="**start flow** #[payload]"/>
+		<logger level="INFO" doc:name="****start order-create-**********" doc:id="6f75d8a8-b2b7-492f-8b39-0a9c22ab657c" message="****start order-create-**********#[payload]"/>
+		<ee:transform doc:name="sku request" doc:id="e8c14526-f90b-4653-ad26-e3d71e088a56" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="skuScript" ><![CDATA[%dw 2.0
+output application/java
+var skuCodeList = readUrl('classpath://lookup/products-sku-code-list.json')
+---
+payload map (item) -> {
+    sku: (skuCodeList[item.productName])[0],
+    productName: item.productName,
+    customerId: item.customerId
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="******skuScript request ******#" doc:id="f596bfe0-fef1-4812-8dd9-7a312fb1cf65" message="******skuScript request ******#[vars.skuScript]"/>
+		<flow-ref doc:name="papi-order-create-price-stock_Flow" doc:id="0e7d0dcd-0ed4-45f7-8295-45ab851a51df" name="papi-order-create-price-stock_Flow"/>
+		<flow-ref doc:name="order-create-tax-_Flow" doc:id="41ef2c2d-9534-4148-9625-658e376a2841" name="order-create-tax-_Flow"/>
+		<set-variable value="#[randomInt(100000) as String]" doc:name="uniqueID" doc:id="57cf35c3-211e-4e23-9b65-b62766fc3a5f" variableName="uniqueID"/>
+		<ee:transform doc:name="order create script" doc:id="a874a30f-7223-49ea-9b22-713275bfdc70" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  "customerId": vars.customerPayload[0].customerId,
+  "customerName": vars.customerPayload[0].customerName,
+  "addresses": [
+    {
+      "phone": vars.customerPayload[0].phone,
+      "street": vars.customerPayload[0].street,
+      "city": vars.customerPayload[0].city,
+      "state": vars.customerPayload[0].state,
+      "postalCode": vars.customerPayload[0].postalCode,
+      "country": vars.customerPayload[0].country,
+    }
+  ],
+  "preferredPaymentMethod": "Credit Card",
+  "orderHistory": [
+    {
+      "orderId": vars.uniqueID,
+      "orderDate": now() as Date {format: "yyyy-MM-dd"},
+      "status": "Delivered",
+      "totalAmount": (vars.pricePayload.productsDetails.price[0] * vars.inventoryPayload.productsDetails.avaliableQty[0]) + vars.taxPayload.taxAmount[0],
+      "taxAmount": vars.taxPayload.taxAmount[0],
+      "items": [
+        {
+          "productId": vars.inventoryPayload.productsDetails.stock_keeping_unit_code[0],
+          "productName": vars.inventoryPayload.productsDetails.productName[0],
+          "quantity": vars.inventoryPayload.productsDetails.avaliableQty[0],
+          "price": vars.pricePayload.productsDetails.price[0],
+          "productCompany": vars.customerPayload[0].company,
+        }
+      ]
+    }
+  ]
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="******orders_sapi-request_start******" doc:id="d93ffd23-3f10-48c3-9992-a15924e5f205" message="******orders_sapi-request_start****** #[payload]"/>
+		<http:request method="POST" doc:name="order_Request" doc:id="500bc1ae-f07e-4f6b-ac49-d86cfe246b78" config-ref="HTTP_Request_configuration_orders" path="${orders.path}">
+			<http:headers ><![CDATA[#[vars.sapiHeaders]]]></http:headers>
+		</http:request>
+		<logger level="INFO" doc:name="****end order-create-********** " doc:id="74b3ab6d-87b5-4ca4-9b1e-01a9743aae8b" message="****end order-create-********** #[payload]"/>
+		<logger level="INFO" doc:name="**end flow**" doc:id="a2284099-2531-44fc-acdd-d386bf296d4d" message="**end flow**#[payload]"/>
+	</flow>
+	<sub-flow name="papi-order-create-price-stock_Flow" doc:id="b32abef0-7235-41bb-afdc-2871c9e61092" >
+		<ee:transform doc:name="Transform Message" doc:id="12e939cf-1c2e-4307-82de-28a0cd606d3e" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="sapiHeaders" ><![CDATA[output application/java
+---
+{
+	"client_id" : "132w",
+	"client_secret" : "23w3we",
+	"Content-Type" : "application/json"
+}]]></ee:set-variable>
+				<ee:set-variable variableName="priceReq" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "SKU": vars.skuScript.sku[0],
+    "productName": vars.skuScript.productName[0]
+}]]></ee:set-variable>
+				<ee:set-variable variableName="stockReq" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "SKU": vars.skuScript.sku[0],
+    "productName": vars.skuScript.productName[0]
+}]]></ee:set-variable>
+				<ee:set-variable variableName="customerReq" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "customerId": vars.skuScript.customerId[0],
+    "company": ""
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<scatter-gather doc:name="Scatter-Gather" doc:id="760003a6-1b8a-4ee3-ae14-4d27cf43796e" >
+			<route >
+				<http:request method="POST" doc:name="Price_Request" doc:id="e637daf5-59b8-47ff-b413-8298370e0e29" config-ref="HTTP_Request_configuration_price" path="${price.path}">
+					<http:body ><![CDATA[#[vars.priceReq]]]></http:body>
+					<http:headers ><![CDATA[#[vars.sapiHeaders]]]></http:headers>
+				</http:request>
+			</route>
+			<route >
+				<http:request method="POST" doc:name="Stock_Request" doc:id="025918e5-5d9b-4acc-989d-de12080d46db" config-ref="HTTP_Request_configuration_stock" path="${stock.path}">
+					<http:body ><![CDATA[#[vars.stockReq]]]></http:body>
+					<http:headers ><![CDATA[#[vars.sapiHeaders]]]></http:headers>
+				</http:request>
+			</route>
+			<route >
+				<http:request method="POST" doc:name="Customer_Request" doc:id="b844fd24-9808-4c47-b60d-880a2ff7b409" config-ref="HTTP_Request_configuration_customer" path="${customer.path}">
+					<http:body ><![CDATA[#[vars.customerReq]]]></http:body>
+					<http:headers ><![CDATA[#[vars.sapiHeaders]]]></http:headers>
+				</http:request>
+			</route>
+		</scatter-gather>
+		<ee:transform doc:name="price, stock, customer response" doc:id="53a3b7f8-6aec-42ea-b843-41e78c7b8dc6" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="customerPayload" ><![CDATA[%dw 2.0
+output application/java
+---
+payload."2".payload]]></ee:set-variable>
+				<ee:set-variable variableName="pricePayload" ><![CDATA[%dw 2.0
+output application/java
+---
+payload."0".payload]]></ee:set-variable>
+				<ee:set-variable variableName="inventoryPayload" ><![CDATA[%dw 2.0
+output application/java
+---
+payload."1".payload]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="order-create-tax-_Flow" doc:id="0e4071f3-fcee-4edf-a41f-19736ece18ea" >
+		<ee:transform doc:name="tax and customer request create" doc:id="07d5fa81-b483-441c-bc71-dc0339bcc8f9" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="taxReq" ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "stateCode": "AP"
+}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<http:request method="POST" doc:name="tax request" doc:id="e21ce14d-ce63-4195-bd9e-9f668cff2b9c" config-ref="HTTP_Request_configuration_tax" path="${tax.path}" target="taxPayload">
+			<http:body ><![CDATA[#[vars.taxReq]]]></http:body>
+			<http:headers ><![CDATA[#[output application/java
+---
+{
+	"client_secret" : "222",
+	"Content-Type" : "application/json",
+	"client_id" : "111"
+}]]]></http:headers>
+		</http:request>
+	</sub-flow>
+</mule>

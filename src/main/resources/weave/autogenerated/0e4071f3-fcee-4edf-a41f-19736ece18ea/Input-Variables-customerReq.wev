@@ -1,0 +1,7 @@
+%dw 2.0
+
+type auto_0e4071f3_fcee_4edf_a41f_19736ece18ea_Input_Variables_customerReq = {|
+  customerId: Null, 
+  company: String
+|}
+

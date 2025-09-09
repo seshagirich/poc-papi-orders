@@ -1,0 +1,14 @@
+[
+ {
+  "bulb": "WP1",
+  "ceilingFan": "WP2",
+  "electricIron": "WP3",
+  "washingMachine": "WP4",
+  "refrigerator": "WP5",
+  "microwaveOven": "WP6",
+  "airConditioner": "WP7",
+  "waterHeater": "WP8",
+  "vacuumCleaner": "WP9",
+  "electricKettle": "WP10"
+}
+ ]

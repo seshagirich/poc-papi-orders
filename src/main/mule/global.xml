@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<configuration-properties doc:name="Configuration properties" doc:id="56fcde5d-8934-4b3d-a11a-fd4b3da5c46a" file="dev.yaml" />
+	<http:request-config name="HTTP_Request_configuration_price" doc:name="HTTP Request configuration" doc:id="181ea3dd-9572-46e3-a164-bbeb43d15afc" >
+		<http:request-connection host="${price.host}" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration_stock" doc:name="HTTP Request configuration" doc:id="d507a545-69f1-48c2-89c7-78205390a8fd" >
+		<http:request-connection host="${stock.host}" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration_customer" doc:name="HTTP Request configuration" doc:id="e9230432-84b7-4018-8587-b040341fee44" >
+		<http:request-connection host="${customer.host}" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration_tax" doc:name="HTTP Request configuration" doc:id="75596764-437d-4f65-b06b-3d7fb216eb4f" >
+		<http:request-connection host="${tax.host}" />
+	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration_orders" doc:name="HTTP Request configuration" doc:id="a59934cf-0225-4ee5-bcfd-f66e3bbeacfd" >
+		<http:request-connection host="${orders.host}" />
+	</http:request-config>
+</mule>
