@@ -51,7 +51,14 @@
 			<munit:set-event doc:name="Set Event" doc:id="22f5104c-0956-42c5-a025-978e9b939fa8" >
 				<munit:payload value="#[MunitTools::getResourceAsString('order-create-request.json')]" mediaType="application/json" />
 			</munit:set-event>
-			<flow-ref doc:name="Flow-ref to papi-order-create-subscriberFlow" doc:id="3ae0b58c-267c-42ef-8486-fa5fa4355380" name="papi-order-create-subscriberFlow"/>
+			<try doc:name="Try" doc:id="de997c9e-8498-4515-a207-a03db72ee3e1" >
+				<flow-ref doc:name="Flow-ref to papi-order-create-subscriberFlow" doc:id="3ae0b58c-267c-42ef-8486-fa5fa4355380" name="papi-order-create-subscriberFlow" />
+				<error-handler >
+					<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="4893ebc7-29f4-4a89-8951-fd0f82f0dfd6" >
+						<logger level="INFO" doc:name="exception" doc:id="359f771b-958c-47ce-957d-a8498bd7b80a" message="exception"/>
+					</on-error-continue>
+				</error-handler>
+			</try>
 		</munit:execution>
 		<munit:validation >
 			<munit-tools:assert-that doc:name="Assert that" doc:id="a0567d8c-dc38-4890-a569-0a35a893b7a4" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>

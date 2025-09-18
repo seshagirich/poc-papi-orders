@@ -22,5 +22,8 @@ orders:
   host: "poc-sapi-orders-soql-5qguky.5sc6y6-3.usa-e2.cloudhub.io"
   path: "/v1/order/create"
     
-  
-  
+    
+  details:
+    host: "poc-sapi-orders-soql-5qguky.5sc6y6-3.usa-e2.cloudhub.io"
+    path: "/api/v1/orders/{orderId}"
+    

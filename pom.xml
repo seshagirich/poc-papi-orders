@@ -4,7 +4,7 @@
 
 	<groupId>com.mycompany</groupId>
 	<artifactId>poc-papi-orders</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.5</version>
 	<packaging>mule-application</packaging>
 
 	<name>poc-papi-orders</name>

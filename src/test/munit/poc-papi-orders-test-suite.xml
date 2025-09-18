@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="poc-papi-orders-test-suite.xml" />
+	<munit:test name="poc-papi-orders-test-suite-poc-papi-orders-mainTest--APIKIT:BAD_REQUEST" doc:id="f22451fc-7631-4987-962f-bc9fbaa6a10a" description="Test" expectedErrorType="APIKIT:BAD_REQUEST">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="a02458e1-b232-4ce7-acf6-3e998634c066" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="poc-papi-orders-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:BAD_REQUEST" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="eb9c8559-0c26-432b-be41-0de0f77af389" >
+				<munit:payload value="#[MunitTools::getResourceAsString('order-detail-eecol-request.json')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to poc-papi-orders-main" doc:id="924045ea-49a9-4214-b25c-7c3e4368dcb4" name="poc-papi-orders-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="dac92b65-d356-4394-a2a5-ddb49ebb9bff" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+
+
+
+	
+	<munit:test name="poc-papi-orders-test-suite-poc-papi-ornTest-APIKIT:NOT_FOUND" doc:id="fc806611-6029-416a-9b03-748767d458d6" description="Test" expectedErrorType="APIKIT:NOT_FOUND">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="be996733-8b66-420e-8f23-9f2728f6930d" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="poc-papi-orders-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_FOUND" />
+				</munit-tools:then-return>
+			
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="24037519-ea93-4757-a01e-2c76e23d1227" >
+				<munit:payload value="#[MunitTools::getResourceAsString('order-detail-eecol-request.json')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to poc-papi-orders-main" doc:id="d6d374bf-7a3f-44ec-8fc6-f95dd8ebef0f" name="poc-papi-orders-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="6d336b9c-f321-4ae1-bcbb-70d90aa1f321" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	
+	
+	
+	
+	
+	<munit:test name="poc-papi-orders-test-suite-poc-papi-ornTest-APIKIT:METHOD_NOT_ALLOWED" doc:id="89471676-655a-49bf-9a60-7880b1a3efa6" description="Test" expectedErrorType="APIKIT:METHOD_NOT_ALLOWED">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="APIKIT:METHOD_NOT_ALLOWED" doc:id="de50aa94-d74f-41ab-a336-34fe94a659ab" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="poc-papi-orders-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:METHOD_NOT_ALLOWED" />
+				</munit-tools:then-return>
+			
+
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="ef47e57f-11df-4a0e-a10e-fd187e23468d" >
+				<munit:payload value="#[MunitTools::getResourceAsString('order-detail-eecol-request.json')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to poc-papi-orders-main" doc:id="4665bf12-9012-4131-a139-d37b865600e2" name="poc-papi-orders-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="86f8eda9-2d1c-495b-bd5c-968fa859519a" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	
+	
+	
+	
+	
+	<munit:test name="poc-papi-orders-test-suite-poc-papi-ornTest-APIKIT:NOT_ACCEPTABLE" doc:id="93056848-5e90-4e65-9f98-a616e24b3e2b" description="Test" expectedErrorType="APIKIT:NOT_ACCEPTABLE">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="APIKIT:METHOD_NOT_ALLOWED" doc:id="8975657b-4ecb-47eb-9123-c2797ca77558" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="poc-papi-orders-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_ACCEPTABLE" />
+				</munit-tools:then-return>
+			
+
+
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="e5de1cb7-4579-4ba4-adc0-6ce342132f84" >
+				<munit:payload value="#[MunitTools::getResourceAsString('order-detail-eecol-request.json')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to poc-papi-orders-main" doc:id="4f75698b-a64e-4d32-b1ce-73c8d4746592" name="poc-papi-orders-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="2f635b2d-0a1e-40d6-9533-dcb49d1f6735" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	
+	
+	
+	
+	<munit:test name="poc-papi-orders-test-suite-poc-papi-ornTest-APIKIT:NOTBLE" doc:id="5b3ab6ae-4ac0-40da-823d-c2bca07a7f4c" description="Test" expectedErrorType="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="APIKIT:UNSUPPORTED_MEDIA_TYPE" doc:id="377447b1-b19d-48a2-9f4e-716391970d3b" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="poc-papi-orders-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:UNSUPPORTED_MEDIA_TYPE" />
+				</munit-tools:then-return>
+			
+
+
+
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="c322a8f5-c83c-4658-b295-ec6c9e96309a" >
+				<munit:payload value="#[MunitTools::getResourceAsString('order-detail-eecol-request.json')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to poc-papi-orders-main" doc:id="31bc0631-88cb-42e4-a108-e7170090682e" name="poc-papi-orders-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="07d1693f-59b2-40a6-8986-a3a90f303dec" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	
+	
+	
+	
+	<munit:test name="poc-papi-orders-test-suite-poc-papi-ornTest-APIKIT:CCEPABLE" doc:id="849d8e1b-7303-4e82-89d5-6e6e82a7ae9c" description="Test" expectedErrorType="APIKIT:NOT_IMPLEMENTED">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="APIKIT:NOT_IMPLEMENTED" doc:id="a73427c2-7310-4708-a90c-63f978f20c82" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="poc-papi-orders-config" attributeName="config-ref" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="APIKIT:NOT_IMPLEMENTED" />
+				</munit-tools:then-return>
+			
+
+
+
+</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="b4da7a16-e97c-41aa-aef6-db6fedbc75c2" >
+				<munit:payload value="#[MunitTools::getResourceAsString('order-detail-eecol-request.json')]" mediaType="application/json" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to poc-papi-orders-main" doc:id="f3b52db2-79fb-4475-b4b9-6c9704339274" name="poc-papi-orders-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert-that doc:name="Assert that" doc:id="28fd5371-cf3a-4b14-9c1e-198416508490" expression="#[payload]" is="#[MunitTools::notNullValue()]"/>
+		</munit:validation>
+	</munit:test>
+	
+
+</mule>

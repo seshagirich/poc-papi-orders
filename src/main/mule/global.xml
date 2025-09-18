@@ -20,4 +20,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 	<http:request-config name="HTTP_Request_configuration_orders" doc:name="HTTP Request configuration" doc:id="a59934cf-0225-4ee5-bcfd-f66e3bbeacfd" >
 		<http:request-connection host="${orders.host}" />
 	</http:request-config>
+	<http:request-config name="HTTP_Request_configuration_order-details" doc:name="HTTP Request configuration" doc:id="3e03f8ab-3397-4e72-beef-5b39c23a8662" >
+		<http:request-connection host="${orders.details.host}" />
+	</http:request-config>
 </mule>

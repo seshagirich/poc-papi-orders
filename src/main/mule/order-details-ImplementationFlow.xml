@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	
+	
+	 <flow name="post:\v1\orders\details:application\json:poc-papi-orders-config">
+        <logger level="INFO" doc:name="***start flow***" doc:id="e389c6e1-f544-423a-ae48-81ef5a59766b" message="***start flow***#[payload]"/>
+		<set-variable value="#[payload.orderId]" doc:name="order" doc:id="7d3ff2a6-caaa-46a0-8913-9e7076fbef03" variableName="order"/>
+		<choice doc:name="Choice" doc:id="0758b239-413a-476f-8670-2116b614d643" >
+			<when expression='#[payload.brand =="eecol"]'>
+				<http:request method="GET" doc:name="sap eee12 Request" doc:id="5d6175db-b466-4496-87f8-b54da3d43d54" config-ref="HTTP_Request_configuration_order-details" path="${orders.details.path}">
+					<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"orderId" : vars.order
+}]]]></http:uri-params>
+				</http:request>
+			</when>
+			<when expression='#[payload.brand =="Anixter"]'>
+				<http:request method="GET" doc:name="sapi Anixter Request" doc:id="6034b594-fa76-41e4-b3a4-b3fecddc3ecf" config-ref="HTTP_Request_configuration_order-details" path="${orders.details.path}">
+					<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	"orderId" : vars.order
+}]]]></http:uri-params>
+				</http:request>
+			</when>
+			<otherwise>
+				<logger level="INFO" doc:name="invalid rerquest" doc:id="6aac6885-36f5-4867-b8e9-d4e4a637bca0" message="invalid rerquest"/>
+			</otherwise>
+		</choice>
+		<ee:transform doc:name="response" doc:id="e9821754-950e-4ff8-a346-fb5313bf8ac6" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+  customerId: payload[0].customerId__c,
+  company: payload[0].company__c,
+  customerName: payload[0].customerName__c,
+
+  addresses: [
+    {
+      phone: payload[0].phone__c,
+      street: payload[0].street__c,
+      city: payload[0].city__c,
+      state: payload[0].state__c,
+      postalCode: payload[0].postalCode__c,
+      country: payload[0].country__c
+    }
+  ],
+
+  preferredPaymentMethod: payload[0].preferredPaymentMethod__c,
+
+  orderHistory: [
+    {
+      orderId: payload[0].orderId__c,
+      orderDate: payload[0].orderDate__c,
+      status: payload[0].status__c,
+      totalAmount: payload[0].totalAmount__c as Number,
+      items: [
+        {
+          productId: payload[0].productId__c,
+          productName: payload[0].productName__c,
+          quantity: payload[0].quantity__c as Number,
+          price: payload[0].price__c as Number
+        }
+      ]
+    }
+  ]
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="***end flow***" doc:id="4b931ad6-f090-4693-8068-ad020e24ab74" message="***end flow*** #[payload]"/>
+    
+</flow>
+	
+	</mule>
